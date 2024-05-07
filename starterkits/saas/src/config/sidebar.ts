@@ -11,26 +11,9 @@ import {
     UserRoundCheckIcon,
     UserRoundPlusIcon,
     UsersRoundIcon,
+    ClockIcon, // Importing the ClockIcon for the examtimer feature
 } from "lucide-react";
 import { siteUrls } from "@/config/urls";
-
-/**
- * This file contains the configuration for the navigation items in the sidebar
- * to add a new navigation item, you can add a new object to the navigation array
- * 1 id: a unique id for the navigation, add it to the navIds object
- * 2 label: the label for the navigation (it's a category label)
- * 3 showLabel: if true, the label will be shown in the sidebar (it's a category label)
- * 4 items: an array of navigation items
- *   - label: the label for the navigation item
- *   - icon: the icon for the navigation item
- *   - href: the href for the navigation item
- *   - subMenu: an array of subMenu items
- *     > label: the label for the subMenu item
- *     > href: the href for the subMenu item
- *     > icon: the icon for the subMenu item
- *
- * @use specific navigation items in the sidebar, you can use the filterNavItems function
- */
 
 type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -71,6 +54,7 @@ const navIds = {
     general: "general",
     org: "org",
     resources: "resources",
+    examtimer: "examtimer", // Adding the examtimer id to the navIds
 };
 
 const navigation: SidebarNavItems[] = [
@@ -178,21 +162,19 @@ const navigation: SidebarNavItems[] = [
             },
         ],
     },
+    {
+        id: navIds.examtimer, // Adding the examtimer navigation item
+        label: "Exam Timer",
+        showLabel: true,
+        items: [
+            {
+                label: "Timer",
+                icon: ClockIcon,
+                href: "/examtimer", // Assuming the route to the examtimer feature
+            },
+        ],
+    },
 ];
-
-type FilterNavItemsProps = {
-    removeIds?: string[];
-    includedIds?: string[];
-};
-
-/**
- * @purpose Filters the navigation items for the sidebar.
- * The filterNavItems function filters the navigation items for the sidebar.
- * @param removeIds An array of string identifiers to remove from the navigation items.
- * @param includeIds An array of string identifiers to include in the navigation items.
- *
- * @returns The filtered navigation items for the sidebar.
- * */
 
 export function filteredNavItems({
     removeIds = [],
@@ -214,11 +196,6 @@ export function filteredNavItems({
 
     return includedItems;
 }
-
-/**
- * The sidebarConfig is an object that contains the configuration for the dashboard
- * @export all the configuration for the sidebar in sidebarConfig
- */
 
 export const sidebarConfig = {
     navIds,
