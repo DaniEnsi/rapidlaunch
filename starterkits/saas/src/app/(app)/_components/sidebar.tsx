@@ -62,10 +62,7 @@ export async function Sidebar({
                             "z-10 transition-transform hover:scale-90",
                         )}
                     >
-                        <Icons.logo
-                            className="text-xl"
-                            iconProps={{ className: "w-6 h-6 fill-primary" }}
-                        />
+                        <Icons.logo/>
                     </Link>
                 </div>
             )}
@@ -108,10 +105,7 @@ export function SidebarLoading({
                     href={siteUrls.home}
                     className={cn("z-10 transition-transform hover:scale-90")}
                 >
-                    <Icons.logo
-                        className="text-xl"
-                        iconProps={{ className: "w-6 h-6 fill-primary" }}
-                    />
+                    <Icons.logo/>
                 </Link>
             </div>
 

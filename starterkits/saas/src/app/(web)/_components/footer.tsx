@@ -19,12 +19,7 @@ export function WebFooter() {
                             href={siteUrls.dashboard.home}
                             className={cn("z-10")}
                         >
-                            <Icons.logo
-                                className="text-xl"
-                                iconProps={{
-                                    className: "w-6 h-6 fill-primary",
-                                }}
-                            />
+                            <Icons.logo/>
                         </Link>
                         <Balancer as="p" className="text-muted-foreground">
                             {siteConfig.description}
