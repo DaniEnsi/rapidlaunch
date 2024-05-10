@@ -15,78 +15,75 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontalIcon } from "lucide-react";
-import { membersToOrganizationsRoleEnum } from "@/server/db/schema";
 import { toast } from "sonner";
 import { type ExamsData } from "./colums";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
-    removeUserMutation,
-    updateMemberRoleMutation,
-} from "@/server/actions/organization/mutations";
+    deleteExam,
+    updateExam,
+} from "@/server/actions/exams/mutations";
 import { useAwaitableTransition } from "@/hooks/use-awaitable-transition";
 
-type Role = (typeof membersToOrganizationsRoleEnum.enumValues)[number];
-
-export function ColumnDropdown({ role, memberId }: ExamsData) {
+export function ColumnDropdown({ examId, title }: ExamsData) {
     const router = useRouter();
 
-    const { mutateAsync: changeRoleMutate, isPending: changeRoleIsPending } =
+    const { mutateAsync: updateExamMutate, isPending: updateExamIsPending } =
         useMutation({
-            mutationFn: ({ role }: { role: Role }) => {
-                return updateMemberRoleMutation({ memberId, role });
+            mutationFn: ({ title }: { title: string }) => {
+                return updateExam({ examId, title });
             },
             onSettled: () => {
                 router.refresh();
             },
         });
 
-    const [roleChangeIsTransitionPending, startAwaitableRoleChangeTransition] =
+    const [updateIsTransitionPending, startAwaitableUpdateTransition] =
         useAwaitableTransition();
 
-    const onRoleChange = (role: Role) => {
+    const onUpdateExam = (title: string) => {
         toast.promise(
             async () => {
-                await changeRoleMutate({ role });
-                await startAwaitableRoleChangeTransition(() => {
+                await updateExamMutate({ title });
+                await startAwaitableUpdateTransition(() => {
                     router.refresh();
                 });
             },
             {
-                loading: "Updating user role...",
-                success: "User role updated!",
-                error: "Failed to update user role, Check your permissions.",
+                loading: "Updating exam...",
+                success: "Exam updated!",
+                error: "Failed to update exam.",
             },
         );
     };
 
     const {
-        mutateAsync: removeMemberMutate,
-        isPending: removeMemberIsPending,
+        mutateAsync: deleteExamMutate,
+        isPending: deleteExamIsPending,
     } = useMutation({
-        mutationFn: ({ memberId }: { memberId: string }) =>
-            removeUserMutation({ memberId }),
+        mutationFn: ({ examId }: { examId: string }) =>
+            deleteExam({ examId }),
     });
 
     const [
-        removeMemberIsTransitionPending,
-        startAwaitableRemoveMemberTransition,
+        deleteIsTransitionPending,
+        startAwaitableDeleteTransition,
     ] = useAwaitableTransition();
 
-    const onRemoveMember = async () => {
+    const onDeleteExam = async () => {
         toast.promise(
             async () => {
-                await removeMemberMutate({
-                    memberId,
+                await deleteExamMutate({
+                    examId,
                 });
-                await startAwaitableRemoveMemberTransition(() => {
+                await startAwaitableDeleteTransition(() => {
                     router.refresh();
                 });
             },
             {
-                loading: "Removing user...",
-                success: "User removed ",
-                error: "Failed to remove user.",
+                loading: "Deleting exam...",
+                success: "Exam deleted",
+                error: "Failed to delete exam.",
             },
         );
     };
@@ -104,41 +101,21 @@ export function ColumnDropdown({ role, memberId }: ExamsData) {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>Edit role</DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                        <DropdownMenuRadioGroup
-                            value={role}
-                            onValueChange={(r) => onRoleChange(r as Role)}
-                        >
-                            {membersToOrganizationsRoleEnum.enumValues.map(
-                                (currentRole) => (
-                                    <DropdownMenuRadioItem
-                                        key={currentRole}
-                                        value={currentRole}
-                                        disabled={
-                                            changeRoleIsPending ||
-                                            roleChangeIsTransitionPending
-                                        }
-                                    >
-                                        {currentRole}
-                                    </DropdownMenuRadioItem>
-                                ),
-                            )}
-                        </DropdownMenuRadioGroup>
-                    </DropdownMenuSubContent>
-                </DropdownMenuSub>
+                <DropdownMenuItem
+                    disabled={updateExamIsPending || updateIsTransitionPending}
+                    onClick={() => onUpdateExam(title)}
+                >
+                    Update
+                </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                    disabled={
-                        removeMemberIsPending || removeMemberIsTransitionPending
-                    }
-                    onClick={onRemoveMember}
+                    disabled={deleteExamIsPending || deleteIsTransitionPending}
+                    onClick={onDeleteExam}
                     className="text-red-600"
                 >
-                    Remove
+                    Delete
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

@@ -347,3 +347,15 @@ export const waitlistUsersSchema = createInsertSchema(waitlistUsers, {
     email: z.string().email("Email must be a valid email address"),
     name: z.string().min(3, "Name must be at least 3 characters long"),
 });
+
+// Adding new table definition for exams
+export const exams = createTable("exams", {
+    examId: varchar("examId", { length: 255 })
+        .notNull()
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description").notNull(),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+});

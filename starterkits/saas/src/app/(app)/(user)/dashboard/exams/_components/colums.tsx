@@ -3,7 +3,6 @@
 "use client";
 
 import { type ColumnDef } from "@tanstack/react-table";
-import { type membersToOrganizations } from "@/server/db/schema";
 import { Badge } from "@/components/ui/badge";
 import { ColumnDropdown } from "./colums-dropdown";
 import { format } from "date-fns";
@@ -11,12 +10,11 @@ import { format } from "date-fns";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type ExamsData = {
-    id: string;
-    name: string | null;
-    email: string;
-    memberId: string;
-    role: typeof membersToOrganizations.$inferSelect.role;
+    examId: string;
+    title: string;
+    description: string;
     createdAt: Date;
+    updatedAt: Date;
 };
 
 export function getColumns(): ColumnDef<ExamsData>[] {
@@ -25,37 +23,14 @@ export function getColumns(): ColumnDef<ExamsData>[] {
 
 export const columns: ColumnDef<ExamsData>[] = [
     {
-        accessorKey: "name",
-        header: () => <span className="pl-2">Name</span>,
-        cell: ({ row }) => {
-            console.log(row.original);
-
-            if (row.original.name) {
-                return (
-                    <span className="pl-2 font-medium">
-                        {row.original.name}
-                    </span>
-                );
-            }
-
-            return <span className="pl-2 text-muted-foreground">No name</span>;
-        },
+        accessorKey: "title",
+        header: () => <span className="pl-2">Title</span>,
+        cell: ({ row }) => <span className="pl-2 font-medium">{row.original.title}</span>,
     },
     {
-        accessorKey: "email",
-        header: "Email",
-    },
-    {
-        accessorKey: "role",
-        header: "Role",
-        cell: ({ row }) => (
-            <Badge variant="secondary" className="capitalize">
-                {row.original.role}
-            </Badge>
-        ),
-        filterFn: (row, id, value) => {
-            return !!value.includes(row.getValue(id));
-        },
+        accessorKey: "description",
+        header: "Description",
+        cell: ({ row }) => <span className="pl-2">{row.original.description}</span>,
     },
     {
         accessorKey: "createdAt",
@@ -63,6 +38,15 @@ export const columns: ColumnDef<ExamsData>[] = [
         cell: ({ row }) => (
             <span className="text-muted-foreground">
                 {format(new Date(row.original.createdAt), "PP")}
+            </span>
+        ),
+    },
+    {
+        accessorKey: "updatedAt",
+        header: "Updated At",
+        cell: ({ row }) => (
+            <span className="text-muted-foreground">
+                {format(new Date(row.original.updatedAt), "PP")}
             </span>
         ),
     },
