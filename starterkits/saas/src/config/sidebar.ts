@@ -3,6 +3,8 @@ import {
     BookTextIcon,
     Building2Icon,
     ClipboardListIcon,
+    Clock,
+    ClockIcon,
     CreditCardIcon,
     HelpCircleIcon,
     LayoutDashboardIcon,
@@ -122,6 +124,16 @@ const navigation: SidebarNavItems[] = [
                 icon: LayoutDashboardIcon,
                 href: siteUrls.dashboard.home,
             },
+            {
+                label: "Exams",
+                icon: BookTextIcon,
+                href: siteUrls.dashboard.exams,
+            },
+            {
+                label: "Timer",
+                icon: ClockIcon,
+                href: siteUrls.dashboard.timer,
+            }
         ],
     },
     {

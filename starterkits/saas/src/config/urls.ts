@@ -23,6 +23,8 @@ export const siteUrls = {
 
     dashboard: {
         home: "/dashboard",
+        exams: "/dashboard/exams",
+        timer: "/dashboard/timer",
     },
     feedback: "/feedback",
     organization: {

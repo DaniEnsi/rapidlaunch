@@ -159,8 +159,8 @@ export const organizationsRelations = relations(
 );
 
 export const membersToOrganizationsRoleEnum = pgEnum("org-member-role", [
-    "Viewer",
-    "Developer",
+    "Invigilator",
+    "Manager",
     "Billing",
     "Admin",
 ]);
@@ -177,7 +177,7 @@ export const membersToOrganizations = createTable(
             .notNull()
             .references(() => organizations.id, { onDelete: "cascade" }),
         role: membersToOrganizationsRoleEnum("role")
-            .default("Viewer")
+            .default("Invigilator")
             .notNull(),
         createdAt: timestamp("createdAt", { mode: "date" })
             .notNull()
