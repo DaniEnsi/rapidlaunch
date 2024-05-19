@@ -347,3 +347,57 @@ export const waitlistUsersSchema = createInsertSchema(waitlistUsers, {
     email: z.string().email("Email must be a valid email address"),
     name: z.string().min(3, "Name must be at least 3 characters long"),
 });
+
+
+export const papersEnum = pgEnum("paper-number", [
+    "Not Selected",
+    "Paper 1",
+    "Paper 2",
+    "Paper 3",
+    "Paper 4",
+    "Paper 5"
+]);
+
+
+export const exams = createTable("exam", {
+    id: varchar("id", { length: 255 })
+        .notNull()
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    name: varchar("name", { length: 255 }).notNull(),
+    paper: papersEnum("paper").default("Not Selected").notNull(),
+    description: text("description").notNull(),
+    duration: integer("duration").notNull(),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    subjectId: varchar("subjectId", { length: 255 }).notNull().references(() => subjects.id, { onDelete: "cascade" }),
+});
+
+export const examRelations = relations(exams, ({ one }) => ({
+    subject: one(subjects, { fields: [exams.subjectId], references: [subjects.id] }), // Updated fields to use subjectId
+}));
+
+export const examInsertSchema = createInsertSchema(exams, {
+    name: z.string().min(3, "Name must be at least 3 characters long"),
+    description: z.string().min(3, "Description must be at least 3 characters long"),
+    duration: z.number().min(1, "Duration must be at least 1"),
+    subjectId: z.string(), // Added subjectId to insert schema
+});
+
+export const examSelectSchema = createSelectSchema(exams); // Created select schema for exam
+
+export const subjects = createTable("subject", {
+    id: varchar("id", { length: 255 })
+        .notNull()
+        .primaryKey()
+        .default(sql`gen_random_uuid()`),
+    name: varchar("name", { length: 255 }).notNull(),
+    icon: varchar("icon", { length: 255 }).notNull(),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const subjectInsertSchema = createInsertSchema(subjects, {
+    name: z.string().min(3, "Name must be at least 3 characters long"),
+    icon: z.string().min(3, "Icon must be at least 3 characters long"),
+});
+
+export const subjectSelectSchema = createSelectSchema(subjects); // Created select schema for subject

@@ -92,7 +92,7 @@ export async function getOrgByIdQuery({ orgId }: GetOrgByIdProps) {
  * @returns Paginated users
  */
 
-const panginatedOrgMembersPropsSchema = z.object({
+const paginatedOrgMembersPropsSchema = z.object({
     page: z.coerce.number().default(1),
     per_page: z.coerce.number().default(10),
     sort: z.string().optional(),
@@ -102,7 +102,7 @@ const panginatedOrgMembersPropsSchema = z.object({
 });
 
 type GetPaginatedOrgMembersQueryProps = z.infer<
-    typeof panginatedOrgMembersPropsSchema
+    typeof paginatedOrgMembersPropsSchema
 >;
 
 export async function getPaginatedOrgMembersQuery(
