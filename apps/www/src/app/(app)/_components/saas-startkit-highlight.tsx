@@ -47,7 +47,7 @@ export function SaasStarterkitHighlight() {
             <p className="gap-2 text-center text-sm sm:text-left">
                 For more information, Visit the{" "}
                 <Link
-                    href={siteUrls.saasStarterkit}
+                    href={siteUrls.saasStarterkit.base}
                     className={badgeVariants({
                         variant: "secondary",
                         className: "ml-1 mt-1 gap-0.5 sm:mt-0",
@@ -70,14 +70,14 @@ export function SaasStarterkitHighlight() {
                     ))}
 
                     <Link
-                        href={siteUrls.saasStarterkit}
+                        href={siteUrls.demo.saas}
                         className={buttonVariants({
                             variant: "ghost",
                             size: "sm",
                             className: "gap-1",
                         })}
                     >
-                        <span>View all</span>
+                        <span>View Live Demo</span>
                         <ArrowRightIcon className="h-4 w-4" />
                     </Link>
                 </TabsList>

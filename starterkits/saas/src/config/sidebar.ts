@@ -187,7 +187,7 @@ const navigation: SidebarNavItems[] = [
             {
                 label: "Blog",
                 icon: PenLineIcon,
-                href: siteUrls.blog,
+                href: siteUrls.blogs,
             },
             {
                 label: "Support",

@@ -17,8 +17,9 @@ export function WebHeader() {
                         <MobileNav />
                     </div>
 
-                    <Link href={siteUrls.home} className="hover:scale-90">
+                    <Link href={siteUrls.home}>
                         <Icons.logo />
+                        <span className="sr-only">Rapidlaunch logo</span>
                     </Link>
                 </div>
 
