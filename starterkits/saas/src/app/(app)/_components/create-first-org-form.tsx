@@ -1,5 +1,5 @@
 import { getOrganizations } from "@/server/actions/organization/queries";
-import { NewUserOrgForm } from "@/app/(app)/_components/new-user-org-form";
+import { NewUserOrgForm } from "@/app/(app)/_components/new-user-form";
 import { getUser } from "@/server/auth";
 
 export async function CreateFirstOrgForm() {
@@ -11,7 +11,7 @@ export async function CreateFirstOrgForm() {
         return (
             <div className="fixed inset-0 flex h-screen w-screen flex-col items-center justify-center bg-black/80">
                 <div className="w-full max-w-xl">
-                    <NewUserOrgForm userId={user!.id} prevBtn={false} />
+                    <NewUserOrgForm prevBtn={false} />
                 </div>
             </div>
         );
