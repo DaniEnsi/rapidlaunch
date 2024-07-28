@@ -209,7 +209,7 @@ type CreateOrgFormSchema = z.infer<typeof createOrgFormSchema>;
 export function NewUserOrgForm(
     { prevBtn = true }: { prevBtn?: boolean } = {},
 ) {
-    const { nextStep, isDisabledStep } = useStepper();
+    const { nextStep } = useStepper();
 
     const form = useForm<CreateOrgFormSchema>({
         resolver: zodResolver(createOrgFormSchema),
@@ -230,10 +230,10 @@ export function NewUserOrgForm(
         try {
             await mutateAsync(values);
 
+            await completeNewUserSetupMutation();
+
             await startAwaitableTransition(() => {
                 nextStep();
-
-                completeNewUserSetupMutation(),
                 toast.success("Organization created successfully");
             });
         } catch (error) {
@@ -323,10 +323,6 @@ export function NewUserOrgForm(
     );
 }
 
-type SendInviteLinkProps = {
-    inviteLink: string;
-    orgName: string;
-};
 
 export function CompletedSetup() {
     return (

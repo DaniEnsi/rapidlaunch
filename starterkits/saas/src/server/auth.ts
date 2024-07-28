@@ -74,6 +74,9 @@ declare module "next-auth/jwt" {
  */
 export const authOptions: NextAuthOptions = {
     callbacks: {
+        async signIn({ account }) {
+            if (account?.provider !== "credentials") return true
+        },
         session({ token, session }) {
             if (token) {
                 // Add the user id to the session, so it's available in the client app
