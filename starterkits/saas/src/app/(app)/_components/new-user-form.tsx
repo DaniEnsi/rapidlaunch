@@ -38,6 +38,8 @@ import { Input } from "@/components/ui/input";
 import { Step, Stepper, useStepper } from "@/components/ui/stepper";
 import type { StepItem } from "@/components/ui/stepper";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useEffect, useCallback } from "react";
 
 const steps = [
     { label: "User" },
@@ -97,6 +99,7 @@ type NewUserProfileFormProps = {
 
 export function NewUserProfileForm({ user }: NewUserProfileFormProps) {
     const { nextStep } = useStepper();
+    const [isPending, startAwaitableTransition] = useAwaitableTransition();
 
     const form = useForm<ProfileFormSchema>({
         resolver: zodResolver(profileFormSchema),
@@ -109,12 +112,9 @@ export function NewUserProfileForm({ user }: NewUserProfileFormProps) {
         mutationFn: () => updateNameMutation({ name: form.getValues().name }),
     });
 
-    const [isPending, startAwaitableTransition] = useAwaitableTransition();
-
-    const onSubmit = async () => {
+    const onSubmit = useCallback(async () => {
         try {
             await mutateAsync();
-
             await startAwaitableTransition(() => {
                 nextStep();
                 toast.success("Profile setup complete!");
@@ -125,7 +125,17 @@ export function NewUserProfileForm({ user }: NewUserProfileFormProps) {
                     "An error occurred while updating your profile",
             );
         }
-    };
+    }, [mutateAsync, startAwaitableTransition, nextStep]);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Enter") {
+                void form.handleSubmit(onSubmit)();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [form, onSubmit]);
 
     return (
         <Form {...form}>
@@ -174,16 +184,6 @@ export function NewUserProfileForm({ user }: NewUserProfileFormProps) {
                     </CardContent>
 
                     <CardFooter className="flex items-center justify-end gap-2">
-                        {/* <Button
-                            disabled={isPending || isMutatePending}
-                            type="submit"
-                            className="gap-2"
-                        >
-                            {isPending || isMutatePending ? (
-                                <Icons.loader className="h-4 w-4" />
-                            ) : null}
-                            <span>Continue</span>
-                        </Button> */}
                         <StepperFormActions
                             isLoading={isPending || isMutatePending}
                         />
@@ -210,6 +210,7 @@ export function NewUserOrgForm(
     { prevBtn = true }: { prevBtn?: boolean } = {},
 ) {
     const { nextStep } = useStepper();
+    const [isPending, startAwaitableTransition] = useAwaitableTransition();
 
     const form = useForm<CreateOrgFormSchema>({
         resolver: zodResolver(createOrgFormSchema),
@@ -224,14 +225,10 @@ export function NewUserOrgForm(
             createOrgMutation({ name, email }),
     });
 
-    const [isPending, startAwaitableTransition] = useAwaitableTransition();
-
-    const onSubmit = async (values: CreateOrgFormSchema) => {
+    const onSubmit = useCallback(async (values: CreateOrgFormSchema) => {
         try {
             await mutateAsync(values);
-
             await completeNewUserSetupMutation();
-
             await startAwaitableTransition(() => {
                 nextStep();
                 toast.success("Organization created successfully");
@@ -242,7 +239,17 @@ export function NewUserOrgForm(
                     "Organization could not be created",
             );
         }
-    };
+    }, [mutateAsync, startAwaitableTransition, nextStep]);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Enter") {
+                void form.handleSubmit(onSubmit)();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [form, onSubmit]);
 
     return (
         <Form {...form}>
@@ -325,6 +332,11 @@ export function NewUserOrgForm(
 
 
 export function CompletedSetup() {
+    const router = useRouter();
+    const onSubmit = useCallback(() => {
+        router.refresh();
+    }, [router]);
+
     return (
         <div>
             <Card>
@@ -339,7 +351,9 @@ export function CompletedSetup() {
                     
                 </CardContent>
                 <CardFooter className="flex items-center justify-end gap-2">
-                    <StepperFormActions />
+                    <Button onClick={onSubmit} size="sm" className="gap-2">
+                        Get Started 🚀
+                    </Button>
                 </CardFooter>
             </Card>
         </div>
@@ -349,30 +363,41 @@ export function CompletedSetup() {
 function StepperFormActions({
     isLoading = false,
 }: { isLoading?: boolean } = {}) {
-    const { prevStep, isDisabledStep, isLastStep, isOptionalStep } =
+    const { prevStep, nextStep, isDisabledStep, isLastStep, isOptionalStep } =
         useStepper();
+    const router = useRouter();
+
+    const onLastStepClick = useCallback(() => {
+        toast.success("Setup complete!");
+        router.refresh();
+    }, [router]);
 
     return (
         <div className="flex w-full justify-end gap-2">
-            { isLastStep ? null : (
-              <Button
-              disabled={isDisabledStep || isLoading}
-              onClick={prevStep}
-              size="sm"
-              variant="secondary"
-          >
-              Back
-          </Button>
+            {!isLastStep && (
+                <Button
+                    disabled={isDisabledStep || isLoading}
+                    onClick={prevStep}
+                    size="sm"
+                    variant="secondary"
+                >
+                    Back
+                </Button>
             )}
-            <Button size="sm" disabled={isLoading} className="gap-2">
+            <Button 
+                size="sm" 
+                disabled={isLoading} 
+                className="gap-2"
+                onClick={isLastStep ? onLastStepClick : undefined}
+                type={isLastStep ? "button" : "submit"}
+            >
                 {isLoading ? <Icons.loader className="h-4 w-4" /> : null}
                 {isLastStep
                     ? "Get Started 🚀"
                     : isOptionalStep
-                      ? "Skip"
-                      : "Next"}
+                    ? "Skip"
+                    : "Next"}
             </Button>
         </div>
     );
 }
-
